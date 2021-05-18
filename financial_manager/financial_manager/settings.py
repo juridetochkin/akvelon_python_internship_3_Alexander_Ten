@@ -91,8 +91,8 @@ WSGI_APPLICATION = 'financial_manager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'fin_db1',
-        'USER': 'admin',
+        'NAME': 'fin_api',
+        'USER': 'fin_api_admin',
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': '127.0.0.1',
         'PORT': '5432',
