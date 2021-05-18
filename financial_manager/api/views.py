@@ -12,7 +12,7 @@ from .permissions import OnlyOwnerHasAccess
 class TransactionViewSet(ModelViewSet):
     """
     Lists, retrieves, creates, updates, deletes Transactions,
-    related to current authenticated request user.
+    related to current authenticated user.
     """
 
     queryset = Transaction.objects.all()
@@ -62,7 +62,7 @@ class TransactionViewSet(ModelViewSet):
 class GetIncomeSumView(APIView):
     """
     Represents sums of INCOMING transactions amounts grouped by dates.
-    Also provides 'start date' and 'end date' filtering in it.
+    Also provides 'start date' and 'end date' filtering.
     """
 
     permission_classes = (OnlyOwnerHasAccess,)
@@ -94,7 +94,7 @@ class GetIncomeSumView(APIView):
 class GetOutcomeSumView(APIView):
     """
     Represents sums of WITHDRAWAL transactions amounts grouped by dates.
-    Also provides 'start date' and 'end date' filtering in it.
+    Also provides 'start date' and 'end date' filtering.
     """
 
     permission_classes = (OnlyOwnerHasAccess,)
