@@ -1,0 +1,3 @@
+In Delelopment...
+
+Swagger: https://app.swaggerhub.com/apis/juridetochkin/financial_manager_api/v1
