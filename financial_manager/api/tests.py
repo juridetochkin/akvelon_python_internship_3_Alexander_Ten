@@ -48,7 +48,6 @@ class RegistrationMixin:
 
 
 class TestUser(RegistrationMixin, TestCase):
-
     updated_first_name = 'Updated First'
     updated_last_name = 'Updated Last'
     updated_email = 'Updated@user.com'
@@ -88,7 +87,8 @@ class TestUser(RegistrationMixin, TestCase):
             data=data,
             content_type='application/json',
             HTTP_AUTHORIZATION=self.token_1,
-            HTTP_ACCEPT='application/json')
+            HTTP_ACCEPT='application/json'
+        )
         self.assertTrue(response.status_code, 204)
 
     def test_user_password_update(self):
@@ -102,7 +102,55 @@ class TestUser(RegistrationMixin, TestCase):
             data=data,
             content_type='application/json',
             HTTP_AUTHORIZATION=self.token_1,
-            HTTP_ACCEPT='application/json')
+            HTTP_ACCEPT='application/json'
+        )
         self.assertTrue(response.status_code, 204)
 
 
+class TestTransactions(RegistrationMixin, TestCase):
+    transactions = [
+        {
+            'date': '2021-05-14',
+            'amount': 514,
+        },
+        {
+            'date': '2021-05-14',
+            'amount': -514,
+        },
+        {
+            'date': '2021-05-15',
+            'amount': 515,
+        },
+        {
+            'date': '2021-05-15',
+            'amount': -515,
+        },
+        {
+            'date': '2021-05-16',
+            'amount': 516,
+        },
+        {
+            'date': '2021-05-16',
+            'amount': -516,
+        },
+    ]
+
+    def setUp(self):
+        self.register_and_get_token()
+
+    def test_transaction_create(self):
+        url = reverse('transaction-list')
+        for transaction in self.transactions:
+            response = self.client.post(
+                url,
+                data=transaction,
+                content_type='application/json',
+                HTTP_AUTHORIZATION=self.token_1
+            )
+            self.assertEqual(response.status_code, 201)
+
+    # def test_transactions_list(self):
+    #     url = reverse('transaction-list')
+    #     response = self.client.get(url, HTTP_AUTHORIZATION=self.token_1)
+    #     for transaction in self.transactions:
+    #         self.assertContains(response, transaction)
