@@ -1,6 +1,33 @@
 <h1>Financial manager REST API. </h1>
 <p> In Development... </p>
 
+<h3>Technical Task:</h3>
+<pre>
+Imagine you are to implement a tool for managing personal finances for money planning.
+You would need to build a REST API for storing user and transactions information.
+The user entity represents an agent who is adding transactions and contains following fields:
+id
+first name
+last name
+email
+The second entity is a transaction - either income or withdrawal. 
+Each transaction needs to have a reference to some user. The Transaction entity contains:
+id
+user_id
+amount - the sum of a transaction
+date
+
+Functional requirements:
+Ability to create / view / edit / delete information about user
+Ability to create / view / edit / delete transactions information
+Ability to view all user’s payments
+Ability to view sum of income/outcome grouped by dates 
+(say, an array of {“date”: “2021-05-11”, “sum”: 2543.50} jsons, so that as a user I know how much I’ve spent/received each day).
+Will be a plus if you also add start date and end date filter to it.
+To view users, and payments you need to provide various filtering methods
+(by payment date, type of transaction (either income or outcome, based on the sign of amount)) and sorting (by date, by amount)
+</pre>
+
 <h3>Host on:</h3>
 http://206.189.100.117:8000/
 
