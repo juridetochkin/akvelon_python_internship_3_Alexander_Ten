@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from .models import Transaction
 from .serializers import TransactionSerializer
-from .permissions import OnlyOwnerHasAccess
+from .permissions import OnlyOwnerOrAdminHasAccess
 
 
 class TransactionViewSet(ModelViewSet):
@@ -17,8 +17,10 @@ class TransactionViewSet(ModelViewSet):
 
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
-    permission_classes = (OnlyOwnerHasAccess,)
-    filter_backends = (filters.OrderingFilter,)
+    permission_classes = (OnlyOwnerOrAdminHasAccess,)
+    filter_backends = (
+        filters.OrderingFilter,
+    )
     ordering_fields = ('date', 'amount')
 
     def get_queryset(self, *args, **kwargs):
@@ -30,7 +32,7 @@ class TransactionViewSet(ModelViewSet):
         queryset = self.queryset.filter(user=self.request.user)
         pk = self.kwargs.get('pk', None)
         date = self.request.query_params.get('date', None)
-        params = self.request.query_params.get('type')
+        params = self.request.query_params.get('type', None)
         transaction_type = params if params in ('in', 'out') else None
 
         if pk:
@@ -54,7 +56,7 @@ class TransactionViewSet(ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        """ Passes 'user' attribute to the serializer. """
+        """ Calls serializer.save() method with 'user' attribute passed there. """
 
         serializer.save(user=self.request.user)
 
@@ -65,7 +67,7 @@ class GetIncomeSumView(APIView):
     Also provides 'start date' and 'end date' filtering.
     """
 
-    permission_classes = (OnlyOwnerHasAccess,)
+    permission_classes = (OnlyOwnerOrAdminHasAccess,)
 
     def get(self, request) -> Response:
         start_date = request.query_params.get('start', None)
@@ -97,7 +99,7 @@ class GetOutcomeSumView(APIView):
     Also provides 'start date' and 'end date' filtering.
     """
 
-    permission_classes = (OnlyOwnerHasAccess,)
+    permission_classes = (OnlyOwnerOrAdminHasAccess,)
 
     def get(self, request) -> Response:
         start_date = request.query_params.get('start', None)

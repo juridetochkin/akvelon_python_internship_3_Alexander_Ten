@@ -1,6 +1,8 @@
 *venv/
 *.idea/
-*__pycache__
+__pycache__/
 *.env
+*.pyo
+*.pyc
 
 */api/schema.py

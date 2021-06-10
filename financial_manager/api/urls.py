@@ -7,7 +7,7 @@ router = SimpleRouter()
 router.register('transactions', TransactionViewSet)
 
 urlpatterns = [
-    path('income/', GetIncomeSumView.as_view()),
-    path('outcome/', GetOutcomeSumView.as_view()),
+    path('income/', GetIncomeSumView.as_view(), name='income'),
+    path('outcome/', GetOutcomeSumView.as_view(), name='outcome'),
     path('', include(router.urls), name='transactions'),
 ]
