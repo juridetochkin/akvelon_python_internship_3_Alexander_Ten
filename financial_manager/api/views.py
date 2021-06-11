@@ -1,8 +1,9 @@
 from django.db.models import Sum
-from rest_framework import filters
+from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Transaction
 from .serializers import TransactionSerializer
@@ -18,40 +19,28 @@ class TransactionViewSet(ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     permission_classes = (OnlyOwnerOrAdminHasAccess,)
-    filter_backends = (
-        filters.OrderingFilter,
-    )
+    filter_backends = (OrderingFilter, DjangoFilterBackend)
+    filterset_fields = ('date',)
     ordering_fields = ('date', 'amount')
 
     def get_queryset(self, *args, **kwargs):
         """
-        Fetches queryset, provides filtering against url params,
+        Fetches queryset, provides filtering against url type_param,
         also checks if 'pk' is passed through router to fetch the specific object.
         """
 
         queryset = self.queryset.filter(user=self.request.user)
         pk = self.kwargs.get('pk', None)
-        date = self.request.query_params.get('date', None)
-        params = self.request.query_params.get('type', None)
-        transaction_type = params if params in ('in', 'out') else None
+        type_param = self.request.query_params.get('type', None)
+        transaction_type = type_param if type_param in ('in', 'out') else None
 
         if pk:
             return queryset.filter(pk=pk)
 
-        elif date and not transaction_type:
-            return queryset.filter(date=date)
-
-        elif date and transaction_type == 'in':
-            return queryset.filter(date=date, amount__gt=0)
-
-        elif date and transaction_type == 'out':
-            return queryset.filter(date=date, amount__lt=0)
-
-        elif not date and transaction_type == 'in':
-            return queryset.filter(amount__gt=0)
-
-        elif not date and transaction_type == 'out':
-            return queryset.filter(amount__lt=0)
+        if transaction_type == 'in':
+            queryset = queryset.filter(amount__gt=0)
+        elif transaction_type == 'out':
+            queryset = queryset.filter(amount__lt=0)
 
         return queryset
 
@@ -69,17 +58,17 @@ class GetIncomeSumView(APIView):
 
     permission_classes = (OnlyOwnerOrAdminHasAccess,)
 
-    def get(self, request) -> Response:
-        start_date = request.query_params.get('start', None)
-        end_date = request.query_params.get('end', None)
+    def get(self, *args, **kwargs):
         transactions = Transaction.objects.filter(
-            user=request.user,
+            user=self.request.user,
             amount__gt=0
         ).values(
             'date'
         ).annotate(
             sum=Sum('amount')
         )
+        start_date = self.kwargs.get('start', None)
+        end_date = self.kwargs.get('end', None)
 
         if start_date and end_date:
             return Response(transactions.filter(date__range=(start_date, end_date)))

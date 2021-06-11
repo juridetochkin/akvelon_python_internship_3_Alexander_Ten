@@ -12,7 +12,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'user')
 
 
-class SumSerializer(serializers.ListSerializer):
+class SumSerializer(serializers.ModelSerializer):
     """ Serializes transaction sums. """
 
     class Meta:

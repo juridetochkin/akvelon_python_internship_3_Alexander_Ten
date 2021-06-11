@@ -1,12 +1,14 @@
-import django_filters
+from django_filters import rest_framework as filters
+from .models import Transaction
 
 
-class TransactionsListFilter(django_filters.FilterSet):
-    date = django_filters.DateFilter(field_name='date', lookup_expr='exact')
-    transaction_type = django_filters.LookupChoiceFilter(
-        field_name='amount',
-        lookup_choices=(
-            'income',
-            'outcome',
-        )
-    )
+class TransactionsFilter(filters.FilterSet):
+    """
+    Class, configuring django-filters filtering feature
+    """
+
+    date = filters.DateFilter(field_name='date', lookup_expr='exact')
+
+    class Meta:
+        model = Transaction
+        fields = ('date',)
